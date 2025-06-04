@@ -1,3 +1,4 @@
+
 import { useState, useMemo } from 'react';
 import { Search, Grid3X3, List, SortAsc, SortDesc, Sun, Moon, Languages } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -290,25 +291,44 @@ const Index = () => {
             <div className="flex items-center gap-4">
               {/* Language Selector */}
               <Select value={language} onValueChange={setLanguage}>
-                <SelectTrigger className="w-32">
-                  <Languages className="w-4 h-4 mr-2" />
+                <SelectTrigger className={`w-32 ${
+                  isDarkMode 
+                    ? 'bg-gray-700 border-gray-600 text-white hover:bg-gray-600' 
+                    : 'bg-white border-gray-300 text-gray-900 hover:bg-gray-50'
+                }`}>
+                  <Languages className={`w-4 h-4 mr-2 ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`} />
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="en">English</SelectItem>
-                  <SelectItem value="pt-BR">Português</SelectItem>
-                  <SelectItem value="es">Español</SelectItem>
+                <SelectContent className={isDarkMode ? 'bg-gray-700 border-gray-600' : 'bg-white border-gray-300'}>
+                  <SelectItem 
+                    value="en"
+                    className={isDarkMode ? 'text-white hover:bg-gray-600 focus:bg-gray-600' : 'text-gray-900 hover:bg-gray-100 focus:bg-gray-100'}
+                  >
+                    English
+                  </SelectItem>
+                  <SelectItem 
+                    value="pt-BR"
+                    className={isDarkMode ? 'text-white hover:bg-gray-600 focus:bg-gray-600' : 'text-gray-900 hover:bg-gray-100 focus:bg-gray-100'}
+                  >
+                    Português
+                  </SelectItem>
+                  <SelectItem 
+                    value="es"
+                    className={isDarkMode ? 'text-white hover:bg-gray-600 focus:bg-gray-600' : 'text-gray-900 hover:bg-gray-100 focus:bg-gray-100'}
+                  >
+                    Español
+                  </SelectItem>
                 </SelectContent>
               </Select>
 
               {/* Dark Mode Toggle */}
               <div className="flex items-center gap-2">
-                <Sun className="w-4 h-4" />
+                <Sun className={`w-4 h-4 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`} />
                 <Switch
                   checked={isDarkMode}
                   onCheckedChange={setIsDarkMode}
                 />
-                <Moon className="w-4 h-4" />
+                <Moon className={`w-4 h-4 ${isDarkMode ? 'text-gray-400' : 'text-gray-600'}`} />
               </div>
 
               <Button 
@@ -333,7 +353,11 @@ const Index = () => {
                 placeholder={t.search}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 w-full"
+                className={`pl-10 w-full ${
+                  isDarkMode 
+                    ? 'bg-gray-700 border-gray-600 text-white placeholder:text-gray-400' 
+                    : 'bg-white border-gray-300 text-gray-900'
+                }`}
               />
             </div>
 
@@ -343,6 +367,13 @@ const Index = () => {
                 variant={viewMode === 'grid' ? 'default' : 'outline'}
                 size="icon"
                 onClick={() => setViewMode('grid')}
+                className={
+                  viewMode === 'grid' 
+                    ? '' 
+                    : isDarkMode 
+                      ? 'bg-gray-700 border-gray-600 text-gray-300 hover:bg-gray-600 hover:text-white' 
+                      : 'bg-white border-gray-300 text-gray-600 hover:bg-gray-50'
+                }
               >
                 <Grid3X3 className="w-4 h-4" />
               </Button>
@@ -350,6 +381,13 @@ const Index = () => {
                 variant={viewMode === 'list' ? 'default' : 'outline'}
                 size="icon"
                 onClick={() => setViewMode('list')}
+                className={
+                  viewMode === 'list' 
+                    ? '' 
+                    : isDarkMode 
+                      ? 'bg-gray-700 border-gray-600 text-gray-300 hover:bg-gray-600 hover:text-white' 
+                      : 'bg-white border-gray-300 text-gray-600 hover:bg-gray-50'
+                }
               >
                 <List className="w-4 h-4" />
               </Button>
