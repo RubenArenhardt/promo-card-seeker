@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { ChevronDown, ChevronUp, DollarSign } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -76,9 +75,9 @@ const SearchFilters = ({
   };
 
   return (
-    <Card className={`mb-6 border transition-colors ${
+    <Card className={`mb-6 border ${
       isDarkMode 
-        ? 'bg-gray-800 border-gray-700' 
+        ? 'bg-gray-800 border-gray-700 text-white' 
         : 'bg-white border-gray-200'
     }`}>
       <Collapsible open={isOpen} onOpenChange={setIsOpen}>
@@ -89,16 +88,16 @@ const SearchFilters = ({
               : 'hover:bg-gray-50'
           }`}>
             <div className="flex items-center justify-between">
-              <CardTitle className={`text-lg font-medium flex items-center gap-2 transition-colors ${
+              <CardTitle className={`text-lg font-medium flex items-center gap-2 ${
                 isDarkMode ? 'text-white' : 'text-gray-900'
               }`}>
                 <DollarSign className="w-5 h-5 text-indigo-600" />
                 Advanced Filters
               </CardTitle>
               {isOpen ? (
-                <ChevronUp className="w-5 h-5 text-gray-500" />
+                <ChevronUp className={`w-5 h-5 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`} />
               ) : (
-                <ChevronDown className="w-5 h-5 text-gray-500" />
+                <ChevronDown className={`w-5 h-5 ${isDarkMode ? 'text-gray-400' : 'text-gray-500'}`} />
               )}
             </div>
           </CardHeader>
@@ -111,16 +110,22 @@ const SearchFilters = ({
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {/* Category Filter */}
                 <div>
-                  <h4 className={`font-medium mb-3 transition-colors ${
+                  <h4 className={`font-medium mb-3 ${
                     isDarkMode ? 'text-white' : 'text-gray-900'
-                  }`}>Category</h4>
+                  }`}>{translations.category || 'Category'}</h4>
                   <Select value={selectedCategory} onValueChange={onCategoryChange}>
-                    <SelectTrigger className="w-full">
+                    <SelectTrigger className={`w-full ${
+                      isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''
+                    }`}>
                       <SelectValue placeholder={translations.allCategories} />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className={isDarkMode ? 'bg-gray-700 border-gray-600' : ''}>
                       {categories.map(category => (
-                        <SelectItem key={category} value={category}>
+                        <SelectItem 
+                          key={category} 
+                          value={category}
+                          className={isDarkMode ? 'text-white hover:bg-gray-600 focus:bg-gray-600' : ''}
+                        >
                           {category === 'all' ? translations.allCategories : category}
                         </SelectItem>
                       ))}
@@ -130,33 +135,62 @@ const SearchFilters = ({
 
                 {/* Sort By */}
                 <div>
-                  <h4 className={`font-medium mb-3 transition-colors ${
+                  <h4 className={`font-medium mb-3 ${
                     isDarkMode ? 'text-white' : 'text-gray-900'
                   }`}>{translations.sortBy}</h4>
                   <Select value={sortBy} onValueChange={onSortByChange}>
-                    <SelectTrigger className="w-full">
+                    <SelectTrigger className={`w-full ${
+                      isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''
+                    }`}>
                       <SelectValue placeholder={translations.sortBy} />
                     </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="name">{translations.name}</SelectItem>
-                      <SelectItem value="price">{translations.price}</SelectItem>
-                      <SelectItem value="discount">{translations.discount}</SelectItem>
+                    <SelectContent className={isDarkMode ? 'bg-gray-700 border-gray-600' : ''}>
+                      <SelectItem 
+                        value="name"
+                        className={isDarkMode ? 'text-white hover:bg-gray-600 focus:bg-gray-600' : ''}
+                      >
+                        {translations.name}
+                      </SelectItem>
+                      <SelectItem 
+                        value="price"
+                        className={isDarkMode ? 'text-white hover:bg-gray-600 focus:bg-gray-600' : ''}
+                      >
+                        {translations.price}
+                      </SelectItem>
+                      <SelectItem 
+                        value="discount"
+                        className={isDarkMode ? 'text-white hover:bg-gray-600 focus:bg-gray-600' : ''}
+                      >
+                        {translations.discount}
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
 
                 {/* Sort Order */}
                 <div>
-                  <h4 className={`font-medium mb-3 transition-colors ${
+                  <h4 className={`font-medium mb-3 ${
                     isDarkMode ? 'text-white' : 'text-gray-900'
-                  }`}>Order</h4>
+                  }`}>{translations.order || 'Order'}</h4>
                   <Select value={sortOrder} onValueChange={onSortOrderChange}>
-                    <SelectTrigger className="w-full">
+                    <SelectTrigger className={`w-full ${
+                      isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''
+                    }`}>
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="asc">Ascending</SelectItem>
-                      <SelectItem value="desc">Descending</SelectItem>
+                    <SelectContent className={isDarkMode ? 'bg-gray-700 border-gray-600' : ''}>
+                      <SelectItem 
+                        value="asc"
+                        className={isDarkMode ? 'text-white hover:bg-gray-600 focus:bg-gray-600' : ''}
+                      >
+                        {translations.ascending || 'Ascending'}
+                      </SelectItem>
+                      <SelectItem 
+                        value="desc"
+                        className={isDarkMode ? 'text-white hover:bg-gray-600 focus:bg-gray-600' : ''}
+                      >
+                        {translations.descending || 'Descending'}
+                      </SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -166,9 +200,13 @@ const SearchFilters = ({
                   <Button 
                     variant="outline" 
                     onClick={resetFilters}
-                    className="w-full"
+                    className={`w-full ${
+                      isDarkMode 
+                        ? 'bg-gray-700 border-gray-600 text-white hover:bg-gray-600' 
+                        : ''
+                    }`}
                   >
-                    Reset All Filters
+                    {translations.resetFilters || 'Reset All Filters'}
                   </Button>
                 </div>
               </div>
@@ -176,17 +214,17 @@ const SearchFilters = ({
               {/* Price Range Section */}
               <div>
                 <div className="flex items-center justify-between mb-4">
-                  <h4 className={`font-medium transition-colors ${
+                  <h4 className={`font-medium ${
                     isDarkMode ? 'text-white' : 'text-gray-900'
-                  }`}>Price Range</h4>
+                  }`}>{translations.priceRange || 'Price Range'}</h4>
                 </div>
                 
                 {/* Min/Max Input Fields */}
                 <div className="grid grid-cols-2 gap-4 mb-4">
                   <div>
-                    <label className={`text-sm font-medium mb-1 block transition-colors ${
+                    <label className={`text-sm font-medium mb-1 block ${
                       isDarkMode ? 'text-gray-300' : 'text-gray-600'
-                    }`}>Minimum ($)</label>
+                    }`}>{translations.minimum || 'Minimum'} ($)</label>
                     <Input
                       type="number"
                       value={minInput}
@@ -194,13 +232,15 @@ const SearchFilters = ({
                       min={minPrice}
                       max={maxPrice}
                       step="0.01"
-                      className="w-full"
+                      className={`w-full ${
+                        isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''
+                      }`}
                     />
                   </div>
                   <div>
-                    <label className={`text-sm font-medium mb-1 block transition-colors ${
+                    <label className={`text-sm font-medium mb-1 block ${
                       isDarkMode ? 'text-gray-300' : 'text-gray-600'
-                    }`}>Maximum ($)</label>
+                    }`}>{translations.maximum || 'Maximum'} ($)</label>
                     <Input
                       type="number"
                       value={maxInput}
@@ -208,7 +248,9 @@ const SearchFilters = ({
                       min={minPrice}
                       max={maxPrice}
                       step="0.01"
-                      className="w-full"
+                      className={`w-full ${
+                        isDarkMode ? 'bg-gray-700 border-gray-600 text-white' : ''
+                      }`}
                     />
                   </div>
                 </div>
@@ -223,7 +265,7 @@ const SearchFilters = ({
                     onValueChange={handlePriceChange}
                     className="w-full"
                   />
-                  <div className={`flex justify-between mt-3 text-sm transition-colors ${
+                  <div className={`flex justify-between mt-3 text-sm ${
                     isDarkMode ? 'text-gray-300' : 'text-gray-600'
                   }`}>
                     <span>${minPrice.toFixed(2)}</span>
@@ -233,18 +275,18 @@ const SearchFilters = ({
               </div>
 
               {/* Filter Summary */}
-              <div className={`rounded-lg p-4 transition-colors ${
+              <div className={`rounded-lg p-4 ${
                 isDarkMode ? 'bg-gray-700' : 'bg-gray-50'
               }`}>
-                <h5 className={`font-medium mb-2 transition-colors ${
+                <h5 className={`font-medium mb-2 ${
                   isDarkMode ? 'text-white' : 'text-gray-900'
-                }`}>Active Filters:</h5>
-                <div className={`text-sm space-y-1 transition-colors ${
+                }`}>{translations.activeFilters || 'Active Filters'}:</h5>
+                <div className={`text-sm space-y-1 ${
                   isDarkMode ? 'text-gray-300' : 'text-gray-600'
                 }`}>
-                  <div>Category: {selectedCategory === 'all' ? 'All Categories' : selectedCategory}</div>
-                  <div>Price: ${priceRange[0].toFixed(2)} - ${priceRange[1].toFixed(2)}</div>
-                  <div>Sort: {translations[sortBy]} ({sortOrder === 'asc' ? 'Ascending' : 'Descending'})</div>
+                  <div>{translations.category || 'Category'}: {selectedCategory === 'all' ? translations.allCategories : selectedCategory}</div>
+                  <div>{translations.price || 'Price'}: ${priceRange[0].toFixed(2)} - ${priceRange[1].toFixed(2)}</div>
+                  <div>{translations.sort || 'Sort'}: {translations[sortBy]} ({sortOrder === 'asc' ? translations.ascending || 'Ascending' : translations.descending || 'Descending'})</div>
                 </div>
               </div>
             </div>
