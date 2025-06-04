@@ -1,4 +1,3 @@
-
 import { useState, useMemo } from 'react';
 import { Search, Grid3X3, List, SortAsc, SortDesc, Sun, Moon, Languages } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -284,9 +283,9 @@ const Index = () => {
       </header>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Search and Filters */}
+        {/* Search Only */}
         <div className={`rounded-xl shadow-md p-6 mb-8 transition-colors ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}>
-          <div className="flex flex-col lg:flex-row gap-4 items-center">
+          <div className="flex items-center gap-4">
             {/* Search */}
             <div className="relative flex-1 min-w-0">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
@@ -297,40 +296,6 @@ const Index = () => {
                 className="pl-10 w-full"
               />
             </div>
-
-            {/* Category Filter */}
-            <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-              <SelectTrigger className="w-full lg:w-48">
-                <SelectValue placeholder={t.allCategories} />
-              </SelectTrigger>
-              <SelectContent>
-                {categories.map(category => (
-                  <SelectItem key={category} value={category}>
-                    {category === 'all' ? t.allCategories : category}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
-            {/* Sort */}
-            <Select value={sortBy} onValueChange={setSortBy}>
-              <SelectTrigger className="w-full lg:w-40">
-                <SelectValue placeholder={t.sortBy} />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="name">{t.name}</SelectItem>
-                <SelectItem value="price">{t.price}</SelectItem>
-                <SelectItem value="discount">{t.discount}</SelectItem>
-              </SelectContent>
-            </Select>
-
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() => setSortOrder(prev => prev === 'asc' ? 'desc' : 'asc')}
-            >
-              {sortOrder === 'asc' ? <SortAsc className="w-4 h-4" /> : <SortDesc className="w-4 h-4" />}
-            </Button>
 
             {/* View Mode Toggle */}
             <div className="flex gap-2">
@@ -360,6 +325,13 @@ const Index = () => {
           minPrice={minPrice}
           isDarkMode={isDarkMode}
           translations={t}
+          selectedCategory={selectedCategory}
+          onCategoryChange={setSelectedCategory}
+          categories={categories}
+          sortBy={sortBy}
+          onSortByChange={setSortBy}
+          sortOrder={sortOrder}
+          onSortOrderChange={setSortOrder}
         />
 
         {/* Results Header */}

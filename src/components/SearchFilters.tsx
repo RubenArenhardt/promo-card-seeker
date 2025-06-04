@@ -4,6 +4,8 @@ import { ChevronDown, ChevronUp, DollarSign } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Slider } from '@/components/ui/slider';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 
 interface SearchFiltersProps {
@@ -13,6 +15,13 @@ interface SearchFiltersProps {
   minPrice: number;
   isDarkMode: boolean;
   translations: any;
+  selectedCategory: string;
+  onCategoryChange: (category: string) => void;
+  categories: string[];
+  sortBy: string;
+  onSortByChange: (sortBy: string) => void;
+  sortOrder: 'asc' | 'desc';
+  onSortOrderChange: (order: 'asc' | 'desc') => void;
 }
 
 const SearchFilters = ({ 
@@ -21,16 +30,49 @@ const SearchFilters = ({
   maxPrice, 
   minPrice, 
   isDarkMode, 
-  translations 
+  translations,
+  selectedCategory,
+  onCategoryChange,
+  categories,
+  sortBy,
+  onSortByChange,
+  sortOrder,
+  onSortOrderChange
 }: SearchFiltersProps) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [minInput, setMinInput] = useState(priceRange[0].toString());
+  const [maxInput, setMaxInput] = useState(priceRange[1].toString());
 
   const handlePriceChange = (value: number[]) => {
-    onPriceRangeChange([value[0], value[1]]);
+    const newRange: [number, number] = [value[0], value[1]];
+    onPriceRangeChange(newRange);
+    setMinInput(value[0].toString());
+    setMaxInput(value[1].toString());
+  };
+
+  const handleMinInputChange = (value: string) => {
+    setMinInput(value);
+    const numValue = parseFloat(value);
+    if (!isNaN(numValue) && numValue >= minPrice && numValue <= priceRange[1]) {
+      onPriceRangeChange([numValue, priceRange[1]]);
+    }
+  };
+
+  const handleMaxInputChange = (value: string) => {
+    setMaxInput(value);
+    const numValue = parseFloat(value);
+    if (!isNaN(numValue) && numValue <= maxPrice && numValue >= priceRange[0]) {
+      onPriceRangeChange([priceRange[0], numValue]);
+    }
   };
 
   const resetFilters = () => {
     onPriceRangeChange([minPrice, maxPrice]);
+    setMinInput(minPrice.toString());
+    setMaxInput(maxPrice.toString());
+    onCategoryChange('all');
+    onSortByChange('name');
+    onSortOrderChange('asc');
   };
 
   return (
@@ -65,22 +107,113 @@ const SearchFilters = ({
         <CollapsibleContent>
           <CardContent className="pt-0">
             <div className="space-y-6">
-              {/* Price Range */}
+              {/* All Filters in Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                {/* Category Filter */}
+                <div>
+                  <h4 className={`font-medium mb-3 transition-colors ${
+                    isDarkMode ? 'text-white' : 'text-gray-900'
+                  }`}>Category</h4>
+                  <Select value={selectedCategory} onValueChange={onCategoryChange}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder={translations.allCategories} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {categories.map(category => (
+                        <SelectItem key={category} value={category}>
+                          {category === 'all' ? translations.allCategories : category}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Sort By */}
+                <div>
+                  <h4 className={`font-medium mb-3 transition-colors ${
+                    isDarkMode ? 'text-white' : 'text-gray-900'
+                  }`}>{translations.sortBy}</h4>
+                  <Select value={sortBy} onValueChange={onSortByChange}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder={translations.sortBy} />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="name">{translations.name}</SelectItem>
+                      <SelectItem value="price">{translations.price}</SelectItem>
+                      <SelectItem value="discount">{translations.discount}</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Sort Order */}
+                <div>
+                  <h4 className={`font-medium mb-3 transition-colors ${
+                    isDarkMode ? 'text-white' : 'text-gray-900'
+                  }`}>Order</h4>
+                  <Select value={sortOrder} onValueChange={onSortOrderChange}>
+                    <SelectTrigger className="w-full">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="asc">Ascending</SelectItem>
+                      <SelectItem value="desc">Descending</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Reset Button */}
+                <div className="flex items-end">
+                  <Button 
+                    variant="outline" 
+                    onClick={resetFilters}
+                    className="w-full"
+                  >
+                    Reset All Filters
+                  </Button>
+                </div>
+              </div>
+
+              {/* Price Range Section */}
               <div>
                 <div className="flex items-center justify-between mb-4">
                   <h4 className={`font-medium transition-colors ${
                     isDarkMode ? 'text-white' : 'text-gray-900'
                   }`}>Price Range</h4>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    onClick={resetFilters}
-                    className="text-xs"
-                  >
-                    Reset
-                  </Button>
                 </div>
                 
+                {/* Min/Max Input Fields */}
+                <div className="grid grid-cols-2 gap-4 mb-4">
+                  <div>
+                    <label className={`text-sm font-medium mb-1 block transition-colors ${
+                      isDarkMode ? 'text-gray-300' : 'text-gray-600'
+                    }`}>Minimum ($)</label>
+                    <Input
+                      type="number"
+                      value={minInput}
+                      onChange={(e) => handleMinInputChange(e.target.value)}
+                      min={minPrice}
+                      max={maxPrice}
+                      step="0.01"
+                      className="w-full"
+                    />
+                  </div>
+                  <div>
+                    <label className={`text-sm font-medium mb-1 block transition-colors ${
+                      isDarkMode ? 'text-gray-300' : 'text-gray-600'
+                    }`}>Maximum ($)</label>
+                    <Input
+                      type="number"
+                      value={maxInput}
+                      onChange={(e) => handleMaxInputChange(e.target.value)}
+                      min={minPrice}
+                      max={maxPrice}
+                      step="0.01"
+                      className="w-full"
+                    />
+                  </div>
+                </div>
+
+                {/* Price Slider */}
                 <div className="px-3">
                   <Slider
                     min={minPrice}
@@ -93,8 +226,8 @@ const SearchFilters = ({
                   <div className={`flex justify-between mt-3 text-sm transition-colors ${
                     isDarkMode ? 'text-gray-300' : 'text-gray-600'
                   }`}>
-                    <span>${priceRange[0].toFixed(2)}</span>
-                    <span>${priceRange[1].toFixed(2)}</span>
+                    <span>${minPrice.toFixed(2)}</span>
+                    <span>${maxPrice.toFixed(2)}</span>
                   </div>
                 </div>
               </div>
@@ -106,10 +239,12 @@ const SearchFilters = ({
                 <h5 className={`font-medium mb-2 transition-colors ${
                   isDarkMode ? 'text-white' : 'text-gray-900'
                 }`}>Active Filters:</h5>
-                <div className={`text-sm transition-colors ${
+                <div className={`text-sm space-y-1 transition-colors ${
                   isDarkMode ? 'text-gray-300' : 'text-gray-600'
                 }`}>
-                  Price: ${priceRange[0].toFixed(2)} - ${priceRange[1].toFixed(2)}
+                  <div>Category: {selectedCategory === 'all' ? 'All Categories' : selectedCategory}</div>
+                  <div>Price: ${priceRange[0].toFixed(2)} - ${priceRange[1].toFixed(2)}</div>
+                  <div>Sort: {translations[sortBy]} ({sortOrder === 'asc' ? 'Ascending' : 'Descending'})</div>
                 </div>
               </div>
             </div>
