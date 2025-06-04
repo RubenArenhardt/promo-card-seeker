@@ -1,11 +1,10 @@
 
 import { useState, useMemo } from 'react';
-import { Search, Filter, Grid3X3, List, SortAsc, SortDesc } from 'lucide-react';
+import { Search, Grid3X3, List, SortAsc, SortDesc, Sun, Moon, Languages } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
+import { Switch } from '@/components/ui/switch';
 import ProductCard from '@/components/ProductCard';
 import SearchFilters from '@/components/SearchFilters';
 import ProductUploader from '@/components/ProductUploader';
@@ -23,79 +22,153 @@ interface Product {
   discount?: number;
 }
 
-// Sample products for demonstration
+interface Translations {
+  [key: string]: {
+    title: string;
+    subtitle: string;
+    upload: string;
+    search: string;
+    allCategories: string;
+    sortBy: string;
+    name: string;
+    price: string;
+    discount: string;
+    productsFound: string;
+    dealsUpTo: string;
+    off: string;
+    noProducts: string;
+    noProductsDesc: string;
+    darkMode: string;
+  };
+}
+
+const translations: Translations = {
+  en: {
+    title: 'TechHub',
+    subtitle: 'Best deals on computer components',
+    upload: 'Upload Products',
+    search: 'Search products, categories, or descriptions...',
+    allCategories: 'All Categories',
+    sortBy: 'Sort by',
+    name: 'Name',
+    price: 'Price',
+    discount: 'Discount',
+    productsFound: 'Products Found',
+    dealsUpTo: 'Showing deals up to',
+    off: 'off',
+    noProducts: 'No products found',
+    noProductsDesc: 'Try adjusting your search criteria or filters',
+    darkMode: 'Dark Mode'
+  },
+  'pt-BR': {
+    title: 'TechHub',
+    subtitle: 'Melhores ofertas em componentes de computador',
+    upload: 'Enviar Produtos',
+    search: 'Buscar produtos, categorias ou descrições...',
+    allCategories: 'Todas as Categorias',
+    sortBy: 'Ordenar por',
+    name: 'Nome',
+    price: 'Preço',
+    discount: 'Desconto',
+    productsFound: 'Produtos Encontrados',
+    dealsUpTo: 'Mostrando ofertas de até',
+    off: 'de desconto',
+    noProducts: 'Nenhum produto encontrado',
+    noProductsDesc: 'Tente ajustar seus critérios de busca ou filtros',
+    darkMode: 'Modo Escuro'
+  },
+  es: {
+    title: 'TechHub',
+    subtitle: 'Mejores ofertas en componentes de computadora',
+    upload: 'Subir Productos',
+    search: 'Buscar productos, categorías o descripciones...',
+    allCategories: 'Todas las Categorías',
+    sortBy: 'Ordenar por',
+    name: 'Nombre',
+    price: 'Precio',
+    discount: 'Descuento',
+    productsFound: 'Productos Encontrados',
+    dealsUpTo: 'Mostrando ofertas de hasta',
+    off: 'de descuento',
+    noProducts: 'No se encontraron productos',
+    noProductsDesc: 'Intenta ajustar tus criterios de búsqueda o filtros',
+    darkMode: 'Modo Oscuro'
+  }
+};
+
+// Computer components sample products
 const sampleProducts: Product[] = [
   {
     id: '1',
-    name: 'Wireless Bluetooth Headphones',
-    price: 79.99,
-    originalPrice: 129.99,
-    type: 'Electronics',
-    category: 'Audio',
-    link: 'https://example.com/headphones',
-    image: 'https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=300&h=300&fit=crop',
-    description: 'Premium wireless headphones with noise cancellation',
-    discount: 38
+    name: 'Mechanical Gaming Keyboard RGB',
+    price: 129.99,
+    originalPrice: 179.99,
+    type: 'Keyboard',
+    category: 'Gaming',
+    link: 'https://example.com/keyboard',
+    image: 'https://images.unsplash.com/photo-1541140532154-b024d705b90a?w=300&h=300&fit=crop',
+    description: 'RGB backlit mechanical keyboard with cherry MX switches',
+    discount: 28
   },
   {
     id: '2',
-    name: 'Smart Fitness Watch',
-    price: 199.99,
-    originalPrice: 299.99,
-    type: 'Electronics',
-    category: 'Wearables',
-    link: 'https://example.com/watch',
-    image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=300&h=300&fit=crop',
-    description: 'Track your fitness goals with advanced health monitoring',
+    name: '27" 4K Gaming Monitor',
+    price: 299.99,
+    originalPrice: 449.99,
+    type: 'Monitor',
+    category: 'Display',
+    link: 'https://example.com/monitor',
+    image: 'https://images.unsplash.com/photo-1527443224154-c4a3942d3acf?w=300&h=300&fit=crop',
+    description: '27-inch 4K UHD gaming monitor with 144Hz refresh rate',
     discount: 33
   },
   {
     id: '3',
-    name: 'Organic Cotton T-Shirt',
-    price: 24.99,
-    originalPrice: 39.99,
-    type: 'Clothing',
-    category: 'Apparel',
-    link: 'https://example.com/tshirt',
-    image: 'https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?w=300&h=300&fit=crop',
-    description: '100% organic cotton, comfortable and sustainable',
-    discount: 37
+    name: 'Wireless Gaming Mouse',
+    price: 79.99,
+    originalPrice: 119.99,
+    type: 'Mouse',
+    category: 'Gaming',
+    link: 'https://example.com/mouse',
+    image: 'https://images.unsplash.com/photo-1527864550417-7fd91fc51a46?w=300&h=300&fit=crop',
+    description: 'High-precision wireless gaming mouse with RGB lighting',
+    discount: 33
   },
   {
     id: '4',
-    name: 'Coffee Maker Deluxe',
-    price: 89.99,
-    originalPrice: 149.99,
-    type: 'Home & Kitchen',
-    category: 'Appliances',
-    link: 'https://example.com/coffee',
-    image: 'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=300&h=300&fit=crop',
-    description: 'Brew perfect coffee every morning with this premium machine',
-    discount: 40
+    name: 'Extended Gaming Mousepad',
+    price: 24.99,
+    originalPrice: 39.99,
+    type: 'Mousepad',
+    category: 'Accessories',
+    link: 'https://example.com/mousepad',
+    image: 'https://images.unsplash.com/photo-1615750185825-4fc0c0f75ac3?w=300&h=300&fit=crop',
+    description: 'Large extended gaming mousepad with anti-slip base',
+    discount: 37
   },
   {
     id: '5',
-    name: 'Gaming Mechanical Keyboard',
-    price: 129.99,
-    originalPrice: 179.99,
-    type: 'Electronics',
-    category: 'Gaming',
-    link: 'https://example.com/keyboard',
-    image: 'https://images.unsplash.com/photo-1541140532154-b024d705b90a?w=300&h=300&fit=crop',
-    description: 'RGB backlit mechanical keyboard for gaming enthusiasts',
-    discount: 28
+    name: 'RTX 4070 Graphics Card',
+    price: 599.99,
+    originalPrice: 799.99,
+    type: 'Graphics Card',
+    category: 'Components',
+    link: 'https://example.com/gpu',
+    image: 'https://images.unsplash.com/photo-1591799264318-7e6ef8ddb7ea?w=300&h=300&fit=crop',
+    description: 'NVIDIA RTX 4070 graphics card for high-end gaming',
+    discount: 25
   },
   {
     id: '6',
-    name: 'Yoga Mat Premium',
-    price: 49.99,
-    originalPrice: 79.99,
-    type: 'Sports & Outdoors',
-    category: 'Fitness',
-    link: 'https://example.com/yoga',
-    image: 'https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=300&h=300&fit=crop',
-    description: 'Non-slip premium yoga mat for all fitness levels',
-    discount: 37
+    name: 'DDR5 32GB RAM Kit',
+    price: 189.99,
+    originalPrice: 249.99,
+    type: 'Memory',
+    category: 'Components',
+    link: 'https://example.com/ram',
+    image: 'https://images.unsplash.com/photo-1562976540-2c3c3503ecf2?w=300&h=300&fit=crop',
+    description: '32GB DDR5 RAM kit with RGB lighting',
+    discount: 24
   }
 ];
 
@@ -108,6 +181,14 @@ const Index = () => {
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [showUploader, setShowUploader] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(false);
+  const [language, setLanguage] = useState('en');
+
+  const t = translations[language];
+
+  // Price range limits
+  const minPrice = 0;
+  const maxPrice = Math.max(1000, ...products.map(p => p.price));
 
   // Get unique categories
   const categories = useMemo(() => {
@@ -127,7 +208,6 @@ const Index = () => {
       return matchesSearch && matchesCategory && matchesPrice;
     });
 
-    // Sort products
     filtered.sort((a, b) => {
       let aValue: any = a[sortBy as keyof Product];
       let bValue: any = b[sortBy as keyof Product];
@@ -159,34 +239,59 @@ const Index = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100">
+    <div className={`min-h-screen transition-colors ${isDarkMode ? 'dark bg-gray-900' : 'bg-gradient-to-br from-blue-50 to-indigo-100'}`}>
       {/* Header */}
-      <header className="bg-white shadow-lg border-b">
+      <header className={`shadow-lg border-b transition-colors ${isDarkMode ? 'bg-gray-800 border-gray-700' : 'bg-white'}`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">PromoHub</h1>
-              <p className="text-gray-600 mt-1">Discover amazing deals and promotions</p>
+              <h1 className={`text-3xl font-bold transition-colors ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>{t.title}</h1>
+              <p className={`mt-1 transition-colors ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>{t.subtitle}</p>
             </div>
-            <Button 
-              onClick={() => setShowUploader(true)}
-              className="bg-indigo-600 hover:bg-indigo-700"
-            >
-              Upload Products
-            </Button>
+            <div className="flex items-center gap-4">
+              {/* Language Selector */}
+              <Select value={language} onValueChange={setLanguage}>
+                <SelectTrigger className="w-32">
+                  <Languages className="w-4 h-4 mr-2" />
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="en">English</SelectItem>
+                  <SelectItem value="pt-BR">Português</SelectItem>
+                  <SelectItem value="es">Español</SelectItem>
+                </SelectContent>
+              </Select>
+
+              {/* Dark Mode Toggle */}
+              <div className="flex items-center gap-2">
+                <Sun className="w-4 h-4" />
+                <Switch
+                  checked={isDarkMode}
+                  onCheckedChange={setIsDarkMode}
+                />
+                <Moon className="w-4 h-4" />
+              </div>
+
+              <Button 
+                onClick={() => setShowUploader(true)}
+                className="bg-indigo-600 hover:bg-indigo-700"
+              >
+                {t.upload}
+              </Button>
+            </div>
           </div>
         </div>
       </header>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Search and Filters */}
-        <div className="bg-white rounded-xl shadow-md p-6 mb-8">
+        <div className={`rounded-xl shadow-md p-6 mb-8 transition-colors ${isDarkMode ? 'bg-gray-800' : 'bg-white'}`}>
           <div className="flex flex-col lg:flex-row gap-4 items-center">
             {/* Search */}
             <div className="relative flex-1 min-w-0">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" />
               <Input
-                placeholder="Search products, categories, or descriptions..."
+                placeholder={t.search}
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="pl-10 w-full"
@@ -196,12 +301,12 @@ const Index = () => {
             {/* Category Filter */}
             <Select value={selectedCategory} onValueChange={setSelectedCategory}>
               <SelectTrigger className="w-full lg:w-48">
-                <SelectValue placeholder="All Categories" />
+                <SelectValue placeholder={t.allCategories} />
               </SelectTrigger>
               <SelectContent>
                 {categories.map(category => (
                   <SelectItem key={category} value={category}>
-                    {category === 'all' ? 'All Categories' : category}
+                    {category === 'all' ? t.allCategories : category}
                   </SelectItem>
                 ))}
               </SelectContent>
@@ -210,12 +315,12 @@ const Index = () => {
             {/* Sort */}
             <Select value={sortBy} onValueChange={setSortBy}>
               <SelectTrigger className="w-full lg:w-40">
-                <SelectValue placeholder="Sort by" />
+                <SelectValue placeholder={t.sortBy} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="name">Name</SelectItem>
-                <SelectItem value="price">Price</SelectItem>
-                <SelectItem value="discount">Discount</SelectItem>
+                <SelectItem value="name">{t.name}</SelectItem>
+                <SelectItem value="price">{t.price}</SelectItem>
+                <SelectItem value="discount">{t.discount}</SelectItem>
               </SelectContent>
             </Select>
 
@@ -251,16 +356,19 @@ const Index = () => {
         <SearchFilters
           priceRange={priceRange}
           onPriceRangeChange={setPriceRange}
-          maxPrice={Math.max(...products.map(p => p.price))}
+          maxPrice={maxPrice}
+          minPrice={minPrice}
+          isDarkMode={isDarkMode}
+          translations={t}
         />
 
         {/* Results Header */}
         <div className="flex justify-between items-center mb-6">
-          <h2 className="text-xl font-semibold text-gray-900">
-            {filteredProducts.length} Products Found
+          <h2 className={`text-xl font-semibold transition-colors ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>
+            {filteredProducts.length} {t.productsFound}
           </h2>
-          <div className="text-sm text-gray-600">
-            Showing deals up to {Math.max(...filteredProducts.map(p => p.discount || 0))}% off
+          <div className={`text-sm transition-colors ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
+            {t.dealsUpTo} {Math.max(...filteredProducts.map(p => p.discount || 0))}% {t.off}
           </div>
         </div>
 
@@ -275,6 +383,7 @@ const Index = () => {
               key={product.id}
               product={product}
               viewMode={viewMode}
+              isDarkMode={isDarkMode}
             />
           ))}
         </div>
@@ -283,8 +392,8 @@ const Index = () => {
         {filteredProducts.length === 0 && (
           <div className="text-center py-12">
             <div className="text-gray-400 text-6xl mb-4">🔍</div>
-            <h3 className="text-xl font-semibold text-gray-900 mb-2">No products found</h3>
-            <p className="text-gray-600">Try adjusting your search criteria or filters</p>
+            <h3 className={`text-xl font-semibold mb-2 transition-colors ${isDarkMode ? 'text-white' : 'text-gray-900'}`}>{t.noProducts}</h3>
+            <p className={`transition-colors ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>{t.noProductsDesc}</p>
           </div>
         )}
       </div>

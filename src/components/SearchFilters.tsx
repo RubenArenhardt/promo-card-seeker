@@ -10,9 +10,19 @@ interface SearchFiltersProps {
   priceRange: [number, number];
   onPriceRangeChange: (range: [number, number]) => void;
   maxPrice: number;
+  minPrice: number;
+  isDarkMode: boolean;
+  translations: any;
 }
 
-const SearchFilters = ({ priceRange, onPriceRangeChange, maxPrice }: SearchFiltersProps) => {
+const SearchFilters = ({ 
+  priceRange, 
+  onPriceRangeChange, 
+  maxPrice, 
+  minPrice, 
+  isDarkMode, 
+  translations 
+}: SearchFiltersProps) => {
   const [isOpen, setIsOpen] = useState(false);
 
   const handlePriceChange = (value: number[]) => {
@@ -20,16 +30,26 @@ const SearchFilters = ({ priceRange, onPriceRangeChange, maxPrice }: SearchFilte
   };
 
   const resetFilters = () => {
-    onPriceRangeChange([0, maxPrice]);
+    onPriceRangeChange([minPrice, maxPrice]);
   };
 
   return (
-    <Card className="mb-6 bg-white border border-gray-200">
+    <Card className={`mb-6 border transition-colors ${
+      isDarkMode 
+        ? 'bg-gray-800 border-gray-700' 
+        : 'bg-white border-gray-200'
+    }`}>
       <Collapsible open={isOpen} onOpenChange={setIsOpen}>
         <CollapsibleTrigger asChild>
-          <CardHeader className="cursor-pointer hover:bg-gray-50 transition-colors">
+          <CardHeader className={`cursor-pointer transition-colors ${
+            isDarkMode 
+              ? 'hover:bg-gray-700' 
+              : 'hover:bg-gray-50'
+          }`}>
             <div className="flex items-center justify-between">
-              <CardTitle className="text-lg font-medium text-gray-900 flex items-center gap-2">
+              <CardTitle className={`text-lg font-medium flex items-center gap-2 transition-colors ${
+                isDarkMode ? 'text-white' : 'text-gray-900'
+              }`}>
                 <DollarSign className="w-5 h-5 text-indigo-600" />
                 Advanced Filters
               </CardTitle>
@@ -48,7 +68,9 @@ const SearchFilters = ({ priceRange, onPriceRangeChange, maxPrice }: SearchFilte
               {/* Price Range */}
               <div>
                 <div className="flex items-center justify-between mb-4">
-                  <h4 className="font-medium text-gray-900">Price Range</h4>
+                  <h4 className={`font-medium transition-colors ${
+                    isDarkMode ? 'text-white' : 'text-gray-900'
+                  }`}>Price Range</h4>
                   <Button 
                     variant="outline" 
                     size="sm" 
@@ -61,14 +83,16 @@ const SearchFilters = ({ priceRange, onPriceRangeChange, maxPrice }: SearchFilte
                 
                 <div className="px-3">
                   <Slider
-                    min={0}
+                    min={minPrice}
                     max={maxPrice}
                     step={1}
                     value={priceRange}
                     onValueChange={handlePriceChange}
                     className="w-full"
                   />
-                  <div className="flex justify-between mt-3 text-sm text-gray-600">
+                  <div className={`flex justify-between mt-3 text-sm transition-colors ${
+                    isDarkMode ? 'text-gray-300' : 'text-gray-600'
+                  }`}>
                     <span>${priceRange[0].toFixed(2)}</span>
                     <span>${priceRange[1].toFixed(2)}</span>
                   </div>
@@ -76,9 +100,15 @@ const SearchFilters = ({ priceRange, onPriceRangeChange, maxPrice }: SearchFilte
               </div>
 
               {/* Filter Summary */}
-              <div className="bg-gray-50 rounded-lg p-4">
-                <h5 className="font-medium text-gray-900 mb-2">Active Filters:</h5>
-                <div className="text-sm text-gray-600">
+              <div className={`rounded-lg p-4 transition-colors ${
+                isDarkMode ? 'bg-gray-700' : 'bg-gray-50'
+              }`}>
+                <h5 className={`font-medium mb-2 transition-colors ${
+                  isDarkMode ? 'text-white' : 'text-gray-900'
+                }`}>Active Filters:</h5>
+                <div className={`text-sm transition-colors ${
+                  isDarkMode ? 'text-gray-300' : 'text-gray-600'
+                }`}>
                   Price: ${priceRange[0].toFixed(2)} - ${priceRange[1].toFixed(2)}
                 </div>
               </div>

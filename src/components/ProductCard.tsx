@@ -20,16 +20,29 @@ interface Product {
 interface ProductCardProps {
   product: Product;
   viewMode: 'grid' | 'list';
+  isDarkMode: boolean;
 }
 
-const ProductCard = ({ product, viewMode }: ProductCardProps) => {
+const ProductCard = ({ product, viewMode, isDarkMode }: ProductCardProps) => {
   const handleProductClick = () => {
     window.open(product.link, '_blank', 'noopener,noreferrer');
   };
 
+  const cardClasses = `hover:shadow-lg transition-all duration-300 border ${
+    isDarkMode 
+      ? 'bg-gray-800 border-gray-700 hover:border-indigo-400' 
+      : 'bg-white border-gray-200 hover:border-indigo-300'
+  }`;
+
+  const textClasses = {
+    primary: isDarkMode ? 'text-white' : 'text-gray-900',
+    secondary: isDarkMode ? 'text-gray-300' : 'text-gray-600',
+    muted: isDarkMode ? 'text-gray-400' : 'text-gray-500'
+  };
+
   if (viewMode === 'list') {
     return (
-      <Card className="hover:shadow-lg transition-all duration-300 bg-white border border-gray-200 hover:border-indigo-300">
+      <Card className={cardClasses}>
         <div className="flex flex-col md:flex-row">
           <div className="md:w-48 h-48 md:h-auto relative overflow-hidden">
             <img
@@ -52,14 +65,14 @@ const ProductCard = ({ product, viewMode }: ProductCardProps) => {
                     <Tag className="w-3 h-3 mr-1" />
                     {product.type}
                   </Badge>
-                  <span className="text-xs text-gray-500">{product.category}</span>
+                  <span className={`text-xs ${textClasses.muted}`}>{product.category}</span>
                 </div>
                 
-                <h3 className="font-semibold text-lg text-gray-900 mb-2 hover:text-indigo-600 transition-colors cursor-pointer">
+                <h3 className={`font-semibold text-lg mb-2 hover:text-indigo-600 transition-colors cursor-pointer ${textClasses.primary}`}>
                   {product.name}
                 </h3>
                 
-                <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+                <p className={`text-sm mb-4 line-clamp-2 ${textClasses.secondary}`}>
                   {product.description}
                 </p>
                 
@@ -69,7 +82,7 @@ const ProductCard = ({ product, viewMode }: ProductCardProps) => {
                       ${product.price.toFixed(2)}
                     </span>
                     {product.originalPrice && (
-                      <span className="text-gray-400 line-through text-lg">
+                      <span className={`line-through text-lg ${textClasses.muted}`}>
                         ${product.originalPrice.toFixed(2)}
                       </span>
                     )}
@@ -98,7 +111,7 @@ const ProductCard = ({ product, viewMode }: ProductCardProps) => {
   }
 
   return (
-    <Card className="group hover:shadow-xl transition-all duration-300 bg-white border border-gray-200 hover:border-indigo-300 hover:-translate-y-1">
+    <Card className={`${cardClasses} group hover:-translate-y-1`}>
       <div className="relative overflow-hidden">
         <img
           src={product.image || 'https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=300&h=300&fit=crop'}
@@ -111,7 +124,9 @@ const ProductCard = ({ product, viewMode }: ProductCardProps) => {
           </Badge>
         )}
         <div className="absolute top-2 left-2">
-          <Badge variant="outline" className="bg-white/90 text-xs">
+          <Badge variant="outline" className={`text-xs ${
+            isDarkMode ? 'bg-gray-800/90' : 'bg-white/90'
+          }`}>
             <Tag className="w-3 h-3 mr-1" />
             {product.type}
           </Badge>
@@ -120,14 +135,14 @@ const ProductCard = ({ product, viewMode }: ProductCardProps) => {
       
       <CardContent className="p-4">
         <div className="mb-2">
-          <span className="text-xs text-gray-500">{product.category}</span>
+          <span className={`text-xs ${textClasses.muted}`}>{product.category}</span>
         </div>
         
-        <h3 className="font-semibold text-lg text-gray-900 mb-2 line-clamp-2 group-hover:text-indigo-600 transition-colors">
+        <h3 className={`font-semibold text-lg mb-2 line-clamp-2 group-hover:text-indigo-600 transition-colors ${textClasses.primary}`}>
           {product.name}
         </h3>
         
-        <p className="text-gray-600 text-sm mb-4 line-clamp-2">
+        <p className={`text-sm mb-4 line-clamp-2 ${textClasses.secondary}`}>
           {product.description}
         </p>
         
@@ -137,7 +152,7 @@ const ProductCard = ({ product, viewMode }: ProductCardProps) => {
               ${product.price.toFixed(2)}
             </span>
             {product.originalPrice && (
-              <span className="text-gray-400 line-through text-sm">
+              <span className={`line-through text-sm ${textClasses.muted}`}>
                 ${product.originalPrice.toFixed(2)}
               </span>
             )}
