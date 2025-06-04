@@ -265,12 +265,6 @@ const SearchFilters = ({
                     onValueChange={handlePriceChange}
                     className="w-full"
                   />
-                  <div className={`flex justify-between mt-3 text-sm ${
-                    isDarkMode ? 'text-gray-300' : 'text-gray-600'
-                  }`}>
-                    <span>${minPrice.toFixed(2)}</span>
-                    <span>${maxPrice.toFixed(2)}</span>
-                  </div>
                 </div>
               </div>
 
