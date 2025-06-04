@@ -38,6 +38,16 @@ interface Translations {
     noProducts: string;
     noProductsDesc: string;
     darkMode: string;
+    category: string;
+    priceRange: string;
+    minimum: string;
+    maximum: string;
+    activeFilters: string;
+    sort: string;
+    ascending: string;
+    descending: string;
+    order: string;
+    resetFilters: string;
   };
 }
 
@@ -57,7 +67,17 @@ const translations: Translations = {
     off: 'off',
     noProducts: 'No products found',
     noProductsDesc: 'Try adjusting your search criteria or filters',
-    darkMode: 'Dark Mode'
+    darkMode: 'Dark Mode',
+    category: 'Category',
+    priceRange: 'Price Range',
+    minimum: 'Minimum',
+    maximum: 'Maximum',
+    activeFilters: 'Active Filters',
+    sort: 'Sort',
+    ascending: 'Ascending',
+    descending: 'Descending',
+    order: 'Order',
+    resetFilters: 'Reset All Filters'
   },
   'pt-BR': {
     title: 'TechHub',
@@ -74,7 +94,17 @@ const translations: Translations = {
     off: 'de desconto',
     noProducts: 'Nenhum produto encontrado',
     noProductsDesc: 'Tente ajustar seus critérios de busca ou filtros',
-    darkMode: 'Modo Escuro'
+    darkMode: 'Modo Escuro',
+    category: 'Categoria',
+    priceRange: 'Faixa de Preço',
+    minimum: 'Mínimo',
+    maximum: 'Máximo',
+    activeFilters: 'Filtros Ativos',
+    sort: 'Ordenação',
+    ascending: 'Crescente',
+    descending: 'Decrescente',
+    order: 'Ordem',
+    resetFilters: 'Redefinir Filtros'
   },
   es: {
     title: 'TechHub',
@@ -91,7 +121,17 @@ const translations: Translations = {
     off: 'de descuento',
     noProducts: 'No se encontraron productos',
     noProductsDesc: 'Intenta ajustar tus criterios de búsqueda o filtros',
-    darkMode: 'Modo Oscuro'
+    darkMode: 'Modo Oscuro',
+    category: 'Categoría',
+    priceRange: 'Rango de Precio',
+    minimum: 'Mínimo',
+    maximum: 'Máximo',
+    activeFilters: 'Filtros Activos',
+    sort: 'Ordenar',
+    ascending: 'Ascendente',
+    descending: 'Descendente',
+    order: 'Orden',
+    resetFilters: 'Restablecer Filtros'
   }
 };
 
